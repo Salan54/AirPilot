@@ -53,8 +53,9 @@ st.markdown(choices)
 dfSelected = df.loc[(df['SINGLE ENGINE MANUFACTURER'] == brand) & (df['TYPE'] == model)]
 # Boolean to resize the dataframe, stored as a session state variable
 st.checkbox("Use container width", value=False, key="use_container_width")
-# st.dataframe(dfSelected, use_container_width=st.session_state.use_container_width)
-st.dataframe(dfSelected.reset_index(drop=True).squeeze(), use_container_width=st.session_state.use_container_width)
+# Workaround: mixed types int and str => Source: https://github.com/streamlit/streamlit/issues/4094 (add .astype(str) to convert all values to str)
+df2 = dfSelected.reset_index(drop=True).squeeze().astype(str)
+st.dataframe(df2, use_container_width=st.session_state.use_container_width)
 cvz1000 = cvzPer1000ft(dfSelected['VZ INIT - MAX RATE'], dfSelected['VZ CEILING - MAX RATE'], dfSelected['CLIMB CEILING CALCULATION'])
 st.write('CVZ / 1000 ft : ',cvz1000.values[0])
 appLdg5V = appLdg5(dfSelected['APP CONSUMPTION - 60% / 55%'])
