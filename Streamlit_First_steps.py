@@ -3,7 +3,18 @@ import pandas as pd
 import streamlit as st
 import sqlite3
 
+# Page wide
+st.set_page_config(layout="wide")
+
 # Fonctions
+@st.cache_data
+def load_data():
+    # Read sqlite query results into a pandas DataFrame
+    # con = sqlite3.connect("data/AirPilotUtilities.db")
+    con = sqlite3.connect("AirPilotUtilities.db")
+    df = pd.read_sql_query("SELECT * FROM CARDS", con)
+    return df
+
 def cvzPer1000ft(VZinit_MaxRate, VZCeiling_MaxRate, ClimbCeilingCalculation):
     return (VZinit_MaxRate - VZCeiling_MaxRate) / (ClimbCeilingCalculation / 1000)
 
@@ -16,18 +27,15 @@ def appLdg10(AppConsumption60_55):
 def appLdg15(AppConsumption60_55):
     return AppConsumption60_55 * 15 / 60
 
+# Load data
+df = load_data()
+
 # Layout
-st.set_page_config(layout="wide")
 st.write("""
 # Simple Air Pilot mockup
 
 """)
 st.sidebar.header("Airplane choice")
-
-# Read sqlite query results into a pandas DataFrame
-# con = sqlite3.connect("data/AirPilotUtilities.db")
-con = sqlite3.connect("AirPilotUtilities.db")
-df = pd.read_sql_query("SELECT * FROM CARDS", con)
 
 brands = df['SINGLE ENGINE MANUFACTURER'].unique()
 brand = st.sidebar.selectbox("Brand", brands)
