@@ -3,8 +3,17 @@ import pandas as pd
 import streamlit as st
 import sqlite3
 
-# Page wide
-st.set_page_config(layout="wide")
+# Initial Page layout
+st.set_page_config(
+    page_title="Air Pilot Mockup",
+    page_icon="✈️",
+    layout="wide",
+    initial_sidebar_state="expanded",
+    menu_items={
+        'About': "Mockup for Air Pilot App.",
+        'Report a bug' : "mailto:streamlit.1b4vv@simplelogin.com"
+    }
+)
 
 # Fonctions
 @st.cache_data
@@ -57,10 +66,17 @@ st.checkbox("Use container width", value=False, key="use_container_width")
 df2 = dfSelected.reset_index(drop=True).squeeze().astype(str)
 st.dataframe(df2, use_container_width=st.session_state.use_container_width)
 cvz1000 = cvzPer1000ft(dfSelected['VZ INIT - MAX RATE'], dfSelected['VZ CEILING - MAX RATE'], dfSelected['CLIMB CEILING CALCULATION'])
-st.write('CVZ / 1000 ft : ',cvz1000.values[0])
+# st.write(f'CVZ / 1000 ft :  :green[{cvz1000.values[0]:4.2f}]')
 appLdg5V = appLdg5(dfSelected['APP CONSUMPTION - 60% / 55%'])
-st.write('APP+LDG 5     : ', appLdg5V.values[0])
+# st.write(f'APP+LDG 5    :  :green[{appLdg5V.values[0]:4.2f}]')
 appLdg10V = appLdg10(dfSelected['APP CONSUMPTION - 60% / 55%'])
-st.write('APP+LDG 10    : ', appLdg10V.values[0])
+# st.write(f'APP+LDG 10    :  :green[{appLdg10V.values[0]:4.2f}]')
 appLdg15V = appLdg15(dfSelected['APP CONSUMPTION - 60% / 55%'])
-st.write('APP+LDG 15    : ', appLdg15V.values[0])
+# st.write(f'APP+LDG 15    :  :green[{appLdg15V.values[0]:4.2f}]')
+
+with st.container():
+    cols = st.columns(4)
+    cols[0].metric(label=":green[CVZ / 1000 ft]", value=f"{cvz1000.values[0]:4.2f}")
+    cols[1].metric(label=":green[APP+LDG 5]", value=f"{appLdg5V.values[0]:4.2f}")
+    cols[2].metric(label=":green[APP+LDG 10]", value=f"{appLdg10V.values[0]:4.2f}")
+    cols[3].metric(label=":green[APP+LDG 15]", value=f"{appLdg15V.values[0]:4.2f}")
